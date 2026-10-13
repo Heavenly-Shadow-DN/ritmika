@@ -1,43 +1,44 @@
 @echo off
-chcp 65001 >nul
 setlocal
 cd /d "%~dp0"
 
 echo ============================================
-echo   Ritmika — запуск магазина
+echo   Ritmika - zapusk magazina
 echo ============================================
 echo.
 
 set PY=
-where python >nul 2>nul && set PY=python
-if not defined PY ( where py >nul 2>nul && set PY=py -3 )
-if not defined PY (
-  echo Python не найден на этом компьютере.
-  echo Установите его с сайта https://www.python.org/downloads/
-  echo при установке отметьте галочкой "Add Python to PATH",
-  echo затем запустите этот файл снова.
-  echo.
-  pause
-  exit /b 1
-)
+where python >nul 2>nul
+if not errorlevel 1 set PY=python
+if defined PY goto found
 
-echo [1/2] Установка зависимостей (первый запуск может занять минуту)...
+where py >nul 2>nul
+if errorlevel 1 goto nopython
+set PY=py -3
+
+:found
+echo [1/2] Ustanovka zavisimostey, pervyy zapusok mozhet zanyat minutu...
 %PY% -m pip install -q -r requirements.txt
-if errorlevel 1 (
-  echo Не удалось установить зависимости. Проверьте интернет и попробуйте снова.
-  pause
-  exit /b 1
-)
+if errorlevel 1 goto pipfail
 
-echo [2/2] Запуск сервера...
+echo [2/2] Zapusk servera. Brauzer otkroetsya sam cherez paru sekund.
+echo Ostanovka: zakroyte eto okno ili nazhmite Ctrl+C.
 echo.
-echo    Сайт откроется:  http://127.0.0.1:5000
-echo    Остановка: закройте это окно (или Ctrl+C)
-echo.
-
-start "" cmd /c "timeout /t 2 >nul & start "" http://127.0.0.1:5000"
 %PY% run.py
-
 echo.
-echo Сервер остановлен.
+echo Server ostanovlen.
 pause
+exit /b 0
+
+:pipfail
+echo Ne udalos ustanovit zavisimosti. Proverte internet i poprobuyte snova.
+pause
+exit /b 1
+
+:nopython
+echo Python ne nayden na etom kompyutere.
+echo Ustanovite ego s sayta https://www.python.org/downloads/
+echo pri ustanovke otmette galochkoy "Add Python to PATH",
+echo zatem zapustite etot fayl snova.
+pause
+exit /b 1
