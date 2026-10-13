@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+
+{% block page %}home{% endblock %}
+{% block skip %}Перейти к коллекции{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <h1 class="hero__title">
+        <span class="hero__line">Спокойные вещи</span>
+        <span class="hero__line">для быстрой</span>
+        <span class="hero__line">жизни.</span>
+      </h1>
+      <p class="hero__sub">
+        Базовый гардероб из честных материалов: шерсть, хлопок, вискоза.
+        Вещи Ritmika сочетаются между собой и не выходят из моды к следующему сезону.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="{{ url_for('shop.catalog') }}">Смотреть каталог</a>
+        <a class="link-underline" href="{{ url_for('shop.lookbook') }}">Лукбук</a>
+      </div>
+    </div>
+    <figure class="hero__media">
+      <img src="{{ url_for('static', filename='img/hero.jpg') }}"
+           alt="Модель в графитовом пальто и овсяном свитере на фоне тёплой серой студии"
+           width="1344" height="768" fetchpriority="high" decoding="async">
+    </figure>
+  </div>
+  <div class="ticker" aria-label="Что нового">
+    <div class="ticker__track">
+      <span class="ticker__group">
+        <span>Осень–Зима 26/27</span>
+        <span>Доставка по России 2–5 дней</span>
+        <span>Примерка перед покупкой</span>
+        <span>Возврат 30 дней</span>
+      </span>
+      <span class="ticker__group" aria-hidden="true">
+        <span>Осень–Зима 26/27</span>
+        <span>Доставка по России 2–5 дней</span>
+        <span>Примерка перед покупкой</span>
+        <span>Возврат 30 дней</span>
+      </span>
+    </div>
+  </div>
+</section>
+
+<section id="newin" class="section">
+  <div class="container">
+    <header class="section-head reveal">
+      <div class="section-head__row">
+        <h2>Новинки</h2>
+        <a class="link-underline" href="{{ url_for('shop.catalog') }}">Весь каталог</a>
+      </div>
+      <p class="section-note">Четыре вещи, с которых проще всего начать.</p>
+    </header>
+    <div class="products">
+      {% for p in newin %}{{ product_card(p) }}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="container">
+    <header class="section-head reveal">
+      <div class="section-head__row">
+        <h2>Лукбук</h2>
+        <a class="link-underline" href="{{ url_for('shop.lookbook') }}">Смотреть целиком</a>
+      </div>
+      <p class="section-note">Снято там, где ритм города слышен лучше всего.</p>
+    </header>
+  </div>
+  <figure class="lookbook-hero">
+    <img src="{{ url_for('static', filename='img/lookbook.jpg') }}"
+         alt="Две модели в вещах нейтральных оттенков в светлом бетонном пространстве"
+         width="1344" height="768" loading="lazy" decoding="async">
+  </figure>
+</section>
+
+<section id="about" class="section">
+  <div class="container about__grid">
+    <div class="about__copy reveal">
+      <h2>О Ritmika</h2>
+      <p>Мы делаем немного вещей, но доводим каждую до ума: выверенный крой, натуральные материалы, небольшие партии.</p>
+      <a class="link-underline" href="{{ url_for('shop.about') }}">Подробнее о бренде</a>
+    </div>
+    <dl class="about__values reveal">
+      <div class="about__value">
+        <dt>Материалы</dt>
+        <dd>Шерсть мериноса, органический хлопок, вискоза — без синтетических заменителей ради цены.</dd>
+      </div>
+      <div class="about__value">
+        <dt>Крой</dt>
+        <dd>Лекала выверяем на примерках — от XS до XL, на разных ростах и фигурах.</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <header class="section-head reveal">
+      <h2>Частые вопросы</h2>
+    </header>
+    <div class="faq-list reveal">
+      <details class="faq">
+        <summary>Сколько идёт доставка?</summary>
+        <p>По Москве — 1–2 дня, по России — 2–5 дней курьерской службой. Для заказов от 10 000 ₽ доставка бесплатная.</p>
+      </details>
+      <details class="faq">
+        <summary>Можно ли примерить перед покупкой?</summary>
+        <p>Да, курьер ждёт до 15 минут: примерьте и откажитесь от неподошедших вещей на месте.</p>
+      </details>
+      <details class="faq">
+        <summary>Как вернуть вещь?</summary>
+        <p>В течение 30 дней с момента получения — при сохранении бирок и товарного вида.</p>
+      </details>
+      <details class="faq">
+        <summary>Как ухаживать за шерстью?</summary>
+        <p>Стирка при 30° на деликатном режиме, сушка в горизонтальном положении.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="subscribe">
+  <div class="container subscribe__inner reveal">
+    <h2>Письма — редко, по делу</h2>
+    <p class="subscribe__note">Раз в месяц: новые вещи, размеры в наличии, закрытые распродажи.</p>
+    <form class="subscribe__form" method="post" action="{{ url_for('shop.subscribe') }}" novalidate>
+      <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+      <label class="visually-hidden" for="subscribe-email">Электронная почта</label>
+      <input id="subscribe-email" name="email" type="email" placeholder="Электронная почта" autocomplete="email">
+      <button class="btn btn--primary" type="submit">Подписаться</button>
+      <label class="consent">
+        <input type="checkbox" name="consent">
+        <span>Согласен(а) на обработку персональных данных согласно
+          <a href="{{ url_for('shop.legal') }}#privacy">Политике конфиденциальности</a> и
+          <a href="{{ url_for('shop.legal') }}#terms">Пользовательскому соглашению</a>.</span>
+      </label>
+    </form>
+    <p class="subscribe__micro">Отписаться можно в один клик — ссылка есть в каждом письме.</p>
+  </div>
+</section>
+{% endblock %}

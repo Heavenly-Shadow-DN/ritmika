@@ -1,0 +1,25 @@
+{% macro product_card(p) %}
+<article class="product">
+  <a class="product__media" href="{{ url_for('shop.product', product_id=p.id) }}" aria-label="{{ p.name }} — подробнее">
+    <img src="{{ url_for('static', filename='img/' ~ p.img) }}" alt="{{ p.alt }}"
+         width="864" height="1152" loading="lazy" decoding="async">
+  </a>
+  <div class="product__info">
+    <h3 class="product__name">
+      <a href="{{ url_for('shop.product', product_id=p.id) }}">{{ p.name }}</a>
+    </h3>
+    <p class="product__meta">{{ p.meta }}</p>
+    <div class="product__row">
+      <p class="product__price">{{ p.price | price_fmt }}</p>
+      {% set next_url = request.full_path.rstrip('?') if request.query_string else request.path %}
+      <form method="post" action="{{ url_for('shop.cart_add') }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+        <input type="hidden" name="product_id" value="{{ p.id }}">
+        <input type="hidden" name="size" value="{{ p.sizes[0] if p.sizes | length == 1 else 'M' }}">
+        <input type="hidden" name="next" value="{{ next_url }}">
+        <button class="btn btn--ghost btn--sm product__add" type="submit">В корзину</button>
+      </form>
+    </div>
+  </div>
+</article>
+{% endmacro %}

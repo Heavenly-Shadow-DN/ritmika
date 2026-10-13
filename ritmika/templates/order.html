@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Заказ №{{ order.id }} — Ritmika{% endblock %}
+{% block page %}order{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="page-title">Заказ принят!</h1>
+  <p class="page-intro">Номер заказа — <strong>№{{ order.id }}</strong>. Мы позвоним по телефону {{ order.phone }} для подтверждения в течение часа.</p>
+
+  <div class="cart-layout" style="margin-block-start: var(--s-xl);">
+    <div>
+      <ul class="cart-list">
+        {% for item in items %}
+          <li class="cart-item">
+            <div class="cart-item__body">
+              <p class="cart-item__name">{{ item.name }}</p>
+              <p class="cart-item__meta">размер {{ item.size }} · {{ item.qty }} шт.</p>
+              <p class="cart-item__price">{{ (item.price * item.qty) | price_fmt }}</p>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <aside class="cart-summary">
+      <div class="cart-summary__row"><span>Получатель</span><strong>{{ order.name }}</strong></div>
+      <div class="cart-summary__row"><span>Доставка</span><strong>{{ 'бесплатно' if order.delivery == 0 else order.delivery | price_fmt }}</strong></div>
+      <p class="cart-summary__delivery-note">Адрес: {{ order.address }}</p>
+      <div class="cart-summary__total"><span>Итого</span><span>{{ order.total | price_fmt }}</span></div>
+    </aside>
+  </div>
+
+  <p style="margin-block-start: var(--s-l);">
+    <a class="btn btn--primary" href="{{ url_for('shop.catalog') }}">Вернуться в каталог</a>
+  </p>
+</div>
+{% endblock %}

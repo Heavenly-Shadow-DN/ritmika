@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+
+{% block title %}Каталог — Ritmika{% endblock %}
+{% block page %}catalog{% endblock %}
+{% block skip %}Перейти к каталогу{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="page-title">Каталог</h1>
+  <p class="page-intro">Осень–Зима 26/27. Вещи сочетаются между собой: соберите гардероб из нескольких моделей.</p>
+
+  <div class="catalog-tools">
+    <div class="chips" role="group" aria-label="Фильтр по категориям">
+      {% for c in categories %}
+        <a class="chip {% if c.id == cat %}is-active{% endif %}"
+           href="{{ url_for('shop.catalog', cat=c.id, sort=sort if sort != 'default' else none) }}">{{ c.title }}</a>
+      {% endfor %}
+    </div>
+    <form class="sort" method="get" action="{{ url_for('shop.catalog') }}">
+      <input type="hidden" name="cat" value="{{ cat }}">
+      <label for="sort">Сортировка</label>
+      <select id="sort" name="sort" onchange="this.form.submit()">
+        <option value="default" {% if sort == 'default' %}selected{% endif %}>По умолчанию</option>
+        <option value="asc" {% if sort == 'asc' %}selected{% endif %}>Сначала дешевле</option>
+        <option value="desc" {% if sort == 'desc' %}selected{% endif %}>Сначала дороже</option>
+      </select>
+      <noscript><button class="btn btn--ghost btn--sm" type="submit">Применить</button></noscript>
+    </form>
+  </div>
+
+  <p class="section-note" aria-live="polite">{{ items | length }} {{ 'модель' if items | length == 1 else ('модели' if 2 <= items | length <= 4 else 'моделей') }}</p>
+  <div class="products">
+    {% for p in items %}{{ product_card(p) }}{% endfor %}
+  </div>
+</div>
+{% endblock %}

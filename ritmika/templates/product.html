@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "macros.html" import product_card %}
+
+{% block title %}{{ item.name }} — Ritmika{% endblock %}
+{% block page %}product{% endblock %}
+{% block skip %}Перейти к товару{% endblock %}
+
+{% block content %}
+<div class="container">
+  <p class="breadcrumb">
+    <a href="{{ url_for('shop.catalog') }}">Каталог</a><span aria-hidden="true"> / </span>{{ item.name }}
+  </p>
+
+  <div class="product-view" data-size-scope>
+    <figure class="pv__media">
+      <img src="{{ url_for('static', filename='img/' ~ item.img) }}" alt="{{ item.alt }}"
+           width="864" height="1152" decoding="async">
+    </figure>
+    <div class="pv__info">
+      <h1 class="pv__name">{{ item.name }}</h1>
+      <p class="pv__meta">{{ item.meta }}</p>
+      <p class="pv__price">{{ item.price | price_fmt }}</p>
+      <p class="pv__desc">{{ item.desc }}</p>
+
+      <form method="post" action="{{ url_for('shop.cart_add') }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+        <input type="hidden" name="product_id" value="{{ item.id }}">
+        {% if item.sizes | length == 1 %}
+          <input type="hidden" name="size" value="{{ item.sizes[0] }}">
+        {% else %}
+          <div class="pv__size">
+            <label for="pv-size">Размер</label>
+            <select id="pv-size" name="size">
+              {% for s in item.sizes %}
+                <option value="{{ s }}" {% if s == 'M' %}selected{% endif %}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
+        <button class="btn btn--primary" type="submit">В корзину</button>
+      </form>
+      <p class="pv__note">Доставка 2–5 дней · Примерка при получении · Возврат 30 дней</p>
+    </div>
+  </div>
+
+  {% if similar %}
+    <section class="section">
+      <header class="section-head">
+        <h2>С этим носят</h2>
+        <p class="section-note">Из той же линейки — вещи сочетаются между собой.</p>
+      </header>
+      <div class="products">
+        {% for p in similar %}{{ product_card(p) }}{% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</div>
+{% endblock %}

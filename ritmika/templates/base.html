@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Ritmika — спокойные вещи для быстрой жизни{% endblock %}</title>
+  <meta name="description" content="{% block description %}Ritmika — магазин базовой одежды из честных материалов. Каталог Осень–Зима 26/27, доставка по России, примерка перед покупкой.{% endblock %}">
+  <meta name="theme-color" content="#F4F2EF">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <script src="{{ url_for('static', filename='js/common.js') }}" defer></script>
+</head>
+<body data-page="{% block page %}{% endblock %}">
+  <a class="skip-link" href="#main">{% block skip %}К содержанию{% endblock %}</a>
+
+  <header class="site-header" data-header>
+    <div class="container site-header__inner">
+      <a class="logo" href="{{ url_for('shop.index') }}" aria-label="Ritmika, на главную">RITMIKA</a>
+      <nav class="site-nav" aria-label="Основная навигация">
+        <a href="{{ url_for('shop.catalog') }}" {% if request.endpoint == 'shop.catalog' or request.endpoint == 'shop.product' %}class="is-active"{% endif %}>Каталог</a>
+        <a href="{{ url_for('shop.lookbook') }}" {% if request.endpoint == 'shop.lookbook' %}class="is-active"{% endif %}>Лукбук</a>
+        <a href="{{ url_for('shop.about') }}" {% if request.endpoint == 'shop.about' %}class="is-active"{% endif %}>О бренде</a>
+      </nav>
+      <div class="site-header__actions">
+        <a class="cart-btn" href="{{ url_for('shop.cart') }}" aria-label="Корзина, товаров: {{ cart_count }}" data-cart-link>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M4 6h12l-1 11H5L4 6Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M7 6V5a3 3 0 0 1 6 0v1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          <span class="cart-btn__count" {% if cart_count == 0 %}hidden{% endif %}>{{ cart_count }}</span>
+        </a>
+        <div class="nav-user">
+          {% if user %}
+            <a href="{{ url_for('auth.profile') }}">Кабинет</a>
+            {% if user.is_admin %}<a href="{{ url_for('auth.admin') }}">Админ</a>{% endif %}
+            <form method="post" action="{{ url_for('auth.logout') }}">
+              <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+              <button class="logout-btn" type="submit">Выйти</button>
+            </form>
+          {% else %}
+            <a href="{{ url_for('auth.login') }}">Войти</a>
+          {% endif %}
+        </div>
+        <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-btn>
+          <span class="menu-btn__bar" aria-hidden="true"></span>
+          <span class="menu-btn__bar" aria-hidden="true"></span>
+          <span class="visually-hidden">Открыть меню</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
+    <nav aria-label="Мобильная навигация">
+      <a href="{{ url_for('shop.index') }}">Главная</a>
+      <a href="{{ url_for('shop.catalog') }}">Каталог</a>
+      <a href="{{ url_for('shop.lookbook') }}">Лукбук</a>
+      <a href="{{ url_for('shop.about') }}">О бренде</a>
+      <a href="{{ url_for('shop.cart') }}">Корзина</a>
+      {% if user %}
+        <a href="{{ url_for('auth.profile') }}">Кабинет</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Войти</a>
+      {% endif %}
+    </nav>
+    <div class="mobile-menu__contacts">
+      <a href="mailto:hello@ritmika.ru">hello@ritmika.ru</a>
+      <a href="tel:+74950000000">+7 495 000-00-00</a>
+      <a href="{{ url_for('shop.legal') }}">Правовые документы</a>
+    </div>
+  </div>
+
+  <main id="main" class="{% block main_class %}section{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer" id="contacts">
+    <div class="container footer__grid">
+      <p class="footer__wordmark" aria-hidden="true">RITMIKA</p>
+      <nav class="footer__nav" aria-label="Навигация в подвале">
+        <a href="{{ url_for('shop.catalog') }}">Каталог</a>
+        <a href="{{ url_for('shop.lookbook') }}">Лукбук</a>
+        <a href="{{ url_for('shop.about') }}">О бренде</a>
+      </nav>
+      <div class="footer__block">
+        <h3>Покупателям</h3>
+        <a href="{{ url_for('shop.legal') }}#terms">Пользовательское соглашение</a>
+        <a href="{{ url_for('shop.legal') }}#privacy">Политика конфиденциальности</a>
+        <a href="{{ url_for('shop.about') }}">Доставка и возврат</a>
+      </div>
+      <div class="footer__block">
+        <h3>Связаться</h3>
+        <a href="mailto:hello@ritmika.ru">hello@ritmika.ru</a>
+        <a href="tel:+74950000000">+7 495 000-00-00</a>
+        <p>Москва, Примерная улица, 1</p>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <p>© 2026 Ritmika</p>
+    </div>
+  </footer>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="toasts" data-toasts aria-live="polite">
+        {% for category, message in messages %}
+          <div class="toast is-in">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+</body>
+</html>

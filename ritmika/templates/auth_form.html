@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Вход' if request.endpoint == 'auth.login' else 'Регистрация' }} — Ritmika{% endblock %}
+{% block page %}auth{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="auth-card">
+    <h1 class="page-title">{{ 'Вход' if request.endpoint == 'auth.login' else 'Регистрация' }}</h1>
+    <form method="post" action="{{ request.path }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+      <label>Email
+        <input name="email" type="email" autocomplete="email" required>
+      </label>
+      <label>Пароль{% if request.endpoint == 'auth.register' %} (минимум 8 символов){% endif %}
+        <input name="password" type="password" autocomplete="{{ 'new-password' if request.endpoint == 'auth.register' else 'current-password' }}" required minlength="8">
+      </label>
+      <button class="btn btn--primary" type="submit">
+        {{ 'Войти' if request.endpoint == 'auth.login' else 'Создать аккаунт' }}
+      </button>
+    </form>
+    <p style="font-size: .875rem; color: var(--muted);">
+      {% if request.endpoint == 'auth.login' %}
+        Нет аккаунта? <a href="{{ url_for('auth.register') }}">Зарегистрируйтесь</a>.
+      {% else %}
+        Уже есть аккаунт? <a href="{{ url_for('auth.login') }}">Войдите</a>.
+      {% endif %}
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Корзина — Ritmika{% endblock %}
+{% block page %}cart{% endblock %}
+{% block skip %}Перейти к корзине{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="page-title">Корзина</h1>
+
+  <div class="cart-layout">
+    <div>
+      {% if rows %}
+        <ul class="cart-list">
+          {% for row in rows %}
+            <li class="cart-item">
+              <a class="cart-item__media" href="{{ url_for('shop.product', product_id=row.product.id) }}">
+                <img src="{{ url_for('static', filename='img/' ~ row.product.img) }}" alt="{{ row.product.alt }}"
+                     width="864" height="1152" loading="lazy" decoding="async">
+              </a>
+              <div class="cart-item__body">
+                <p class="cart-item__name">
+                  <a href="{{ url_for('shop.product', product_id=row.product.id) }}">{{ row.product.name }}</a>
+                </p>
+                <p class="cart-item__meta">{{ row.product.meta }} · размер {{ row.size }}</p>
+                <p class="cart-item__price">{{ (row.product.price * row.qty) | price_fmt }}</p>
+                <div class="cart-item__controls">
+                  <span class="stepper">
+                    <form method="post" action="{{ url_for('shop.cart_update') }}">
+                      <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+                      <input type="hidden" name="key" value="{{ row.key }}">
+                      <input type="hidden" name="qty" value="{{ row.qty - 1 }}">
+                      <button type="submit" aria-label="Убавить количество">−</button>
+                    </form>
+                    <output aria-label="Количество">{{ row.qty }}</output>
+                    <form method="post" action="{{ url_for('shop.cart_update') }}">
+                      <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+                      <input type="hidden" name="key" value="{{ row.key }}">
+                      <input type="hidden" name="qty" value="{{ row.qty + 1 }}">
+                      <button type="submit" aria-label="Прибавить количество">+</button>
+                    </form>
+                  </span>
+                  <form method="post" action="{{ url_for('shop.cart_remove') }}">
+                    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+                    <input type="hidden" name="key" value="{{ row.key }}">
+                    <button class="cart-remove" type="submit">Убрать</button>
+                  </form>
+                </div>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="cart-empty">
+          <p class="cart-empty__title">В корзине пока пусто</p>
+          <p class="cart-empty__note">Загляните в коллекцию — начните с базовых вещей.</p>
+          <a class="btn btn--primary" href="{{ url_for('shop.catalog') }}">Перейти в каталог</a>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if rows %}
+      <aside class="cart-summary" style="margin-block-end: var(--s-m);">
+        <div class="cart-summary__row"><span>Товары</span><strong>{{ totals.count }} · {{ totals.items_total | price_fmt }}</strong></div>
+        <div class="cart-summary__row"><span>Доставка</span><strong>{{ 'бесплатно' if totals.delivery == 0 else totals.delivery | price_fmt }}</strong></div>
+        <p class="cart-summary__delivery-note">
+          {{ 'Доставка бесплатна для заказов от 10 000 ₽' if totals.delivery == 0 else 'До бесплатной доставки не хватает ' ~ (10000 - totals.items_total) | price_fmt }}
+        </p>
+        <div class="cart-summary__total"><span>Итого</span><span>{{ totals.total | price_fmt }}</span></div>
+      </aside>
+
+      <form class="checkout" method="post" action="{{ url_for('shop.checkout') }}" novalidate>
+        <h2>Оформление заказа</h2>
+        <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+        <label>Имя и фамилия
+          <input name="name" type="text" autocomplete="name" value="{{ defaults.name }}" required>
+        </label>
+        <label>Телефон
+          <input name="phone" type="tel" autocomplete="tel" placeholder="+7 ___ ___-__-__" value="{{ defaults.phone }}" required>
+        </label>
+        <label>Электронная почта
+          <input name="email" type="email" autocomplete="email" value="{{ defaults.email }}" required>
+        </label>
+        <label>Адрес доставки
+          <textarea name="address" rows="2" placeholder="Город, улица, дом, квартира" required>{{ defaults.address }}</textarea>
+        </label>
+        <label class="consent">
+          <input type="checkbox" name="consent">
+          <span>Согласен(а) на обработку персональных данных согласно
+            <a href="{{ url_for('shop.legal') }}#privacy">Политике конфиденциальности</a> и
+            <a href="{{ url_for('shop.legal') }}#terms">Пользовательскому соглашению</a>.</span>
+        </label>
+        <button class="btn btn--primary" type="submit">Оформить заказ</button>
+        <p class="cart-summary__delivery-note">Оплата при получении. Курьер ждёт до 15 минут — примерьте и решите на месте.</p>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

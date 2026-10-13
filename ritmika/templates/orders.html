@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Кабинет — Ritmika{% endblock %}
+{% block page %}profile{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="page-title">Кабинет</h1>
+  <p class="page-intro">{{ user.email }}</p>
+
+  {% if orders %}
+    <div class="cart-layout">
+      <div>
+        {% for order in orders %}
+          <div class="cart-item" style="grid-template-columns: 1fr;">
+            <div class="cart-item__body">
+              <p class="cart-item__name">Заказ №{{ order.id }}</p>
+              <p class="cart-item__meta">{{ order.created_at }}</p>
+              <ul style="margin: var(--space-3xs) 0; padding-inline-start: 1.1rem; color: var(--muted); font-size: .875rem;">
+                {% for item in items[order.id] %}
+                  <li>{{ item.name }} — {{ item.size }} × {{ item.qty }} ({{ item.price | price_fmt }})</li>
+                {% endfor %}
+              </ul>
+              <p class="cart-item__price">Итого: {{ order.total | price_fmt }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <p class="page-intro" style="margin-block: var(--s-l);">Заказов пока нет.</p>
+    <a class="btn btn--primary" href="{{ url_for('shop.catalog') }}">Перейти в каталог</a>
+  {% endif %}
+</div>
+{% endblock %}

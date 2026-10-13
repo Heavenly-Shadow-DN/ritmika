@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Лукбук — Ritmika{% endblock %}
+{% block page %}lookbook{% endblock %}
+{% block skip %}Перейти к лукбуку{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="page-title">Лукбук</h1>
+  <p class="page-intro">Осень–Зима 26/27. Один темп, разные ритмы: как вещи коллекции играют вместе.</p>
+</div>
+
+<figure class="lookbook-hero">
+  <img src="{{ url_for('static', filename='img/lookbook.jpg') }}"
+       alt="Две модели в вещах нейтральных оттенков в светлом бетонном пространстве"
+       width="1344" height="768" decoding="async">
+  <figcaption>Кампания Осень–Зима 26/27</figcaption>
+</figure>
+
+<div class="container">
+  <div class="lookbook-grid">
+    {% set gallery = [
+      ('product-coat.jpg', 'Пальто «Октава»'),
+      ('product-knit.jpg', 'Свитер «Синкопа»'),
+      ('product-trousers.jpg', 'Брюки «Метроном»'),
+      ('product-shirt.jpg', 'Рубашка «Ноктюрн»'),
+      ('product-jacket.jpg', 'Жакет «Пауза»'),
+      ('product-cardigan.jpg', 'Кардиган «Адажио»'),
+      ('product-dress.jpg', 'Платье «Ария»'),
+      ('product-scarf.jpg', 'Снуд «Легато»')
+    ] %}
+    {% for img, caption in gallery %}
+      <figure>
+        <img src="{{ url_for('static', filename='img/' ~ img) }}" alt="{{ caption }} — деталь образа"
+             width="864" height="1152" loading="lazy" decoding="async">
+        <figcaption>{{ caption }}</figcaption>
+      </figure>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
