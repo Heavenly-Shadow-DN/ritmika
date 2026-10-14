@@ -10,18 +10,22 @@ echo.
 set PY=
 where python >nul 2>nul
 if not errorlevel 1 set PY=python
-if defined PY goto found
+if defined PY goto checklib
 
 where py >nul 2>nul
 if errorlevel 1 goto nopython
 set PY=py -3
 
-:found
-echo [1/2] Ustanovka zavisimostey, pervyy zapusok mozhet zanyat minutu...
-%PY% -m pip install -q -r requirements.txt
+:checklib
+if exist lib goto run
+
+echo Pervyy zapusk: ustanovka bibliotek v papku lib...
+set PIP_USER=0
+%PY% -m pip install --target lib -r requirements.txt
 if errorlevel 1 goto pipfail
 
-echo [2/2] Zapusk servera. Brauzer otkroetsya sam cherez paru sekund.
+:run
+echo Zapusk servera. Brauzer otkroetsya sam cherez paru sekund.
 echo Ostanovka: zakroyte eto okno ili nazhmite Ctrl+C.
 echo.
 %PY% run.py
@@ -31,7 +35,7 @@ pause
 exit /b 0
 
 :pipfail
-echo Ne udalos ustanovit zavisimosti. Proverte internet i poprobuyte snova.
+echo Ne udalos ustanovit biblioteki. Proverte internet i poprobuyte snova.
 pause
 exit /b 1
 
